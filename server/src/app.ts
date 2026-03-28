@@ -7,6 +7,7 @@ import type { DeploymentExposure, DeploymentMode } from "@paperclipai/shared";
 import type { StorageService } from "./storage/types.js";
 import { httpLogger, errorHandler } from "./middleware/index.js";
 import { actorMiddleware } from "./middleware/auth.js";
+import { jcWorldAuth } from "./middleware/jcworld-auth.js";
 import { boardMutationGuard } from "./middleware/board-mutation-guard.js";
 import { privateHostnameGuard, resolvePrivateHostnameAllowSet } from "./middleware/private-hostname-guard.js";
 import { healthRoutes } from "./routes/health.js";
@@ -99,6 +100,8 @@ export async function createApp(
       bindHost: opts.bindHost,
     }),
   );
+  // JC World outer auth layer (validates Supabase JWT + user_apps access)
+  app.use(jcWorldAuth());
   app.use(
     actorMiddleware(db, {
       deploymentMode: opts.deploymentMode,
