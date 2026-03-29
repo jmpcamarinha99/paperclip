@@ -118,5 +118,37 @@ Nota: O Dockerfile usa PostgreSQL embedded, mas variáveis adicionais podem ser 
 
 ---
 
+## Ferramentas Partilhadas
+
+Este projeto tem acesso a ferramentas centralizadas do JC World:
+
+### MCPs Globais (disponíveis automaticamente)
+- **Supabase MCP** — acesso direto à BD, auth, storage
+- **GitHub MCP** — repos, issues, PRs
+- **Context7 MCP** — documentação atualizada de libs
+
+### Slash Commands (disponíveis em qualquer sessão)
+- `/status` — estado do servidor (Docker, PM2, portas, disco)
+- `/deploy` — trigger deploy via Coolify
+- `/auth-status` — estado da autenticação Claude
+- `/tunnel-check` — verificar Cloudflare Tunnel
+- `/supabase-status` — estado do Supabase
+
+Documentação completa: `/srv/shared/docs/08-catalogo-ferramentas.md`
+
+---
+
 *Última atualização: 26 de Março de 2026*
 *Projeto JC World — Agente subordinado ao Oscar*
+
+
+---
+
+## Telegram — Comunicacao com o Joao
+
+Este agente pode enviar notificacoes ao Joao via Telegram:
+```bash
+/srv/shared/libs/telegram-notify.sh "mensagem"
+```
+
+Usar para: deploys, erros criticos, tarefas concluidas, alertas de seguranca.
