@@ -152,3 +152,10 @@ Este agente pode enviar notificacoes ao Joao via Telegram:
 ```
 
 Usar para: deploys, erros criticos, tarefas concluidas, alertas de seguranca.
+
+
+## Team Directory — Equipa JC World
+
+Todos os agentes devem conhecer a equipa completa e saber delegar tarefas.
+Directorio completo: `/srv/shared/team-directory.md`
+Para delegar: usar `/delegate` ou escrever em `/srv/shared/mesh/inbox/{agent-id}/`
