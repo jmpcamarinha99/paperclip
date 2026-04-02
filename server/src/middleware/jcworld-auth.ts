@@ -15,7 +15,7 @@ const PORTAL_URL = process.env.PORTAL_URL || "https://app.jc-world.com";
 const APP_SLUG = "paperclip";
 const JC_AUTH_ENABLED = process.env.JC_AUTH_ENABLED !== "false";
 
-const PUBLIC_PATHS = ["/health", "/api/health", "/favicon.ico", "/robots.txt", "/.well-known"];
+const PUBLIC_PATHS = ["/health", "/api/health", "/favicon.ico", "/robots.txt", "/.well-known", "/invite", "/api/auth"];
 
 function base64urlDecode(str: string): Buffer {
   str = str.replace(/-/g, "+").replace(/_/g, "/");

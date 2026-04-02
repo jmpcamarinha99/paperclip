@@ -159,3 +159,77 @@ Usar para: deploys, erros criticos, tarefas concluidas, alertas de seguranca.
 Todos os agentes devem conhecer a equipa completa e saber delegar tarefas.
 Directorio completo: `/srv/shared/team-directory.md`
 Para delegar: usar `/delegate` ou escrever em `/srv/shared/mesh/inbox/{agent-id}/`
+
+
+---
+
+## MCPs — Ecossistema
+
+### Os teus MCPs (carregados na sessão):
+- **context7** (stdio, ~60 MB) — Docs actualizadas de libs
+- **supabase** (stdio, ~60 MB) — Base de dados, auth, storage
+- **brave-search** (stdio, ~60 MB) — Pesquisa web
+- **github** (http, 0 MB) — Repos, issues, PRs
+- **sentry** (http, 0 MB) — Error tracking
+- **stripe** (http, 0 MB) — Pagamentos
+
+### MCPs do ecossistema
+Tabela completa de distribuição: ver `/srv/CLAUDE.md` secção "MCPs — Distribuição Cirúrgica por Agente"
+
+### Como pedir um MCP que não tens:
+```
+bash /srv/shared/libs/mesh.sh send paperclip <agente-que-tem> "Preciso de [MCP]" "Detalhe do que preciso..."
+```
+O dispatcher executa automaticamente o agente destino.
+
+---
+
+## Hierarquia e Colaboração
+
+Documentação completa: `/srv/shared/mesh/hierarchy.md`
+
+### Tua posição:
+- **Nível:** 4 — Projecto
+- **Reportas a:** Oscar
+- **Podes pedir ajuda a:** Designer (UI), QA (testes), DevOps (deploy), Sentinel (security), DocWriter (docs), PluginManager (tools)
+
+### ANTES de agir, consulta:
+- Designer — antes de alterar UI significativamente
+- QA — antes de fazer deploy
+- Sentinel — antes de alterar auth ou segurança
+- DevOps — para questões de infra/deploy
+- DocWriter — após mudanças grandes (notificar)
+- Oscar — para qualquer coisa cross-project
+
+### Quando receberes uma tarefa complexa (multi-projecto ou estratégica):
+1. Posta na sala mesh relevante: `bash /srv/shared/libs/mesh.sh room-post general paperclip "Recebi tarefa X, plano é Y, concordam?"`
+2. Espera por feedback dos agentes envolvidos (verifica sala após postar)
+3. Se há objecção, ajusta. Se concordam, avança.
+4. Quando terminas, posta resultado na sala: `bash /srv/shared/libs/mesh.sh room-post general paperclip "Concluído: resultado Z"`
+
+### Salas onde participas:
+- `general`
+
+---
+
+## Mesh — Colaboração
+
+O JC World usa um sistema de mesh baseado em ficheiros para colaboração entre agentes.
+
+### Ao iniciar sessão:
+1. **Verifica inbox:** Corre `bash /srv/shared/libs/mesh.sh check-inbox paperclip` — se houver pedidos pendentes, processa-os antes de qualquer outra tarefa
+2. **Lê actividade recente:** Corre `bash /srv/shared/libs/mesh.sh history 10` — contexto do que aconteceu no servidor
+3. **Actualiza presença:** Corre `bash /srv/shared/libs/mesh.sh update-presence paperclip` (ou com descrição do que vais fazer)
+
+### Ao completar trabalho significativo:
+1. **Regista actividade:** `bash /srv/shared/libs/mesh.sh log paperclip <type> "descrição"` — tipos: deploy, fix, feature, alert, system
+2. **Se foi delegação:** `bash /srv/shared/libs/mesh.sh reply <ficheiro-tarefa> done "resultado"` — move para done/ automaticamente
+3. **Se afecta outro agente:** `bash /srv/shared/libs/mesh.sh send paperclip <destino> "assunto" "mensagem"` — notifica via inbox
+
+### Quando precisas de ajuda:
+1. **Procura quem sabe:** `bash /srv/shared/libs/mesh.sh find-skill "keyword"` — ex: "react", "security", "deploy"
+2. **Delega:** `bash /srv/shared/libs/mesh.sh send paperclip <destino> "assunto" "detalhes"` — ou usa `/delegate`
+3. **Se urgente:** adiciona prioridade `urgent` e será notificado via Telegram
+
+### Comandos mesh disponíveis
+Referência completa: `bash /srv/shared/libs/mesh.sh help`
