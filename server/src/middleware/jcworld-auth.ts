@@ -15,7 +15,7 @@ const PORTAL_URL = process.env.PORTAL_URL || "https://app.jc-world.com";
 const APP_SLUG = "paperclip";
 const JC_AUTH_ENABLED = process.env.JC_AUTH_ENABLED !== "false";
 
-const PUBLIC_PATHS = ["/health", "/api/health", "/favicon.ico", "/robots.txt", "/.well-known", "/invite", "/api/auth"];
+const PUBLIC_PATHS = ["/health", "/api/health", "/favicon.ico", "/robots.txt", "/.well-known", "/invite", "/api/auth", "/api/invites"];
 
 function base64urlDecode(str: string): Buffer {
   str = str.replace(/-/g, "+").replace(/_/g, "/");
@@ -119,6 +119,8 @@ export function jcWorldAuth(): RequestHandler {
     if (PUBLIC_PATHS.some(p => path === p || path.startsWith(p + "/"))) return next();
     if (path.startsWith("/api/") && req.headers["x-paperclip-agent-key"]) return next();
     if (path.startsWith("/static/") || path.startsWith("/assets/") || path.startsWith("/_next/")) return next();
+    // Allow common static assets at root (favicons, manifests, service worker)
+    if (/^\/(favicon[\w.-]*|site\.webmanifest|sw\.js|apple-touch-icon[\w.-]*)$/.test(path)) return next();
 
     const token = extractToken(req);
     if (!token) {
