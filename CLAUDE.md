@@ -222,9 +222,10 @@ O JC World usa um sistema de mesh baseado em ficheiros para colaboração entre 
 3. **Actualiza presença:** Corre `bash /srv/shared/libs/mesh.sh update-presence paperclip` (ou com descrição do que vais fazer)
 
 ### Ao completar trabalho significativo:
-1. **Regista actividade:** `bash /srv/shared/libs/mesh.sh log paperclip <type> "descrição"` — tipos: deploy, fix, feature, alert, system
-2. **Se foi delegação:** `bash /srv/shared/libs/mesh.sh reply <ficheiro-tarefa> done "resultado"` — move para done/ automaticamente
-3. **Se afecta outro agente:** `bash /srv/shared/libs/mesh.sh send paperclip <destino> "assunto" "mensagem"` — notifica via inbox
+1. **Guarda lição:** `bash /srv/shared/libs/mesh.sh memory-save paperclip "lição aprendida" --tags "tag1,tag2" --status done|failed` — OBRIGATÓRIO: guardar o que aprendeste
+2. **Regista actividade:** `bash /srv/shared/libs/mesh.sh log paperclip <type> "descrição"` — tipos: deploy, fix, feature, alert, system
+3. **Se foi delegação:** `bash /srv/shared/libs/mesh.sh reply <ficheiro-tarefa> done "resultado"` — move para done/ automaticamente
+4. **Se afecta outro agente:** `bash /srv/shared/libs/mesh.sh send paperclip <destino> "assunto" "mensagem"` — notifica via inbox
 
 ### Quando precisas de ajuda:
 1. **Procura quem sabe:** `bash /srv/shared/libs/mesh.sh find-skill "keyword"` — ex: "react", "security", "deploy"
@@ -233,3 +234,9 @@ O JC World usa um sistema de mesh baseado em ficheiros para colaboração entre 
 
 ### Comandos mesh disponíveis
 Referência completa: `bash /srv/shared/libs/mesh.sh help`
+
+Comandos de memória:
+```bash
+mesh.sh memory-save <agent-id> "<lição>" --tags "t1,t2" --status done|failed  # Guardar lição
+mesh.sh memory-read <agent-id> [n]                   # Ler memória do agente
+```
