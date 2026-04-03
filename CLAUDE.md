@@ -109,6 +109,36 @@ Nota: O Dockerfile usa PostgreSQL embedded, mas variáveis adicionais podem ser 
 - Commitar .env ou credenciais
 - Aceder a ficheiros de outros projetos
 
+### Deploy — Processo Completo
+
+Tu **NÃO fazes deploy directamente**. O deploy é centralizado no DevOps. Quando precisares de deploy, segue estes passos na ordem:
+
+**Passo 1 — Código pronto**
+- Verifica que o código compila/funciona localmente
+- Corre `npm run build` ou equivalente para confirmar que não há erros
+
+**Passo 2 — Commit e push**
+```bash
+git add <ficheiros alterados>
+git commit -m "descrição clara da alteração"
+git push origin main
+```
+
+**Passo 3 — Pedir deploy ao DevOps**
+```bash
+bash /srv/shared/libs/mesh.sh send paperclip devops "deploy paperclip" "Alterações: <resumo do que mudou>. Código pushed para main, build testado."
+```
+
+**Passo 4 — Aguardar confirmação**
+- O DevOps executa o deploy via Coolify API
+- Verifica o resultado na sala mesh ou na tua inbox
+
+**PROIBIDO:**
+- Correr `docker build`, `docker run`, `docker stop` ou qualquer comando Docker
+- Executar scripts de deploy manualmente
+- Alterar configurações do Coolify
+- Criar ou expor portas
+
 ### Convenções de código
 - Idioma do código: Inglês
 - Idioma da UI: Inglês (projeto open-source)
