@@ -13,7 +13,7 @@ const SUPABASE_JWT_SECRET = process.env.SUPABASE_JWT_SECRET || "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const PORTAL_URL = process.env.PORTAL_URL || "https://app.jc-world.com";
 const APP_SLUG = "paperclip";
-const JC_AUTH_ENABLED = process.env.JC_AUTH_ENABLED !== "false";
+// Auth is ALWAYS enabled — no toggle allowed
 
 const PUBLIC_PATHS = ["/health", "/api/health", "/favicon.ico", "/robots.txt", "/.well-known", "/invite", "/api/auth", "/api/invites"];
 
@@ -57,7 +57,7 @@ function verifyToken(token: string): Record<string, any> | null {
     const payload = verifyJwtHs256(token, SUPABASE_JWT_SECRET);
     if (payload) return payload;
   }
-  return decodeJwtUnverified(token);
+  return null;
 }
 
 function extractToken(req: any): string | null {
@@ -111,7 +111,7 @@ const DENIED_HTML = `<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8">
 
 export function jcWorldAuth(): RequestHandler {
   return async (req, res, next) => {
-    if (!JC_AUTH_ENABLED) return next();
+    // Auth always active — removed JC_AUTH_ENABLED toggle
 
     const path = req.path;
 
