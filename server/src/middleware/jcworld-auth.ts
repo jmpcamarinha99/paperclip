@@ -134,7 +134,7 @@ function extractToken(req: any): string | null {
 
 function checkUserAccess(userId: string): Promise<boolean> {
   return new Promise((resolve) => {
-    if (!SUPABASE_SERVICE_ROLE_KEY) { resolve(true); return; }
+    if (!SUPABASE_SERVICE_ROLE_KEY) { resolve(false); return; } // Fail closed
     const url = new URL(
       `${SUPABASE_URL}/rest/v1/user_apps?select=role,apps!inner(slug)&user_id=eq.${userId}&apps.slug=eq.${APP_SLUG}`
     );
