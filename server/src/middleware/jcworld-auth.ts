@@ -51,11 +51,71 @@ function decodeJwtUnverified(token: string): Record<string, any> | null {
   }
 }
 
-function verifyToken(token: string): Record<string, any> | null {
+// ES256 JWKS verification (primary method — Supabase uses ES256)
+let jwksCache: { keys: any[]; ts: number } | null = null;
+
+async function fetchJwks(): Promise<any[]> {
+  if (jwksCache && Date.now() - jwksCache.ts < 3600000) return jwksCache.keys;
+  return new Promise((resolve) => {
+    const url = `${SUPABASE_URL}/auth/v1/.well-known/jwks.json`;
+    https.get(url, (res) => {
+      let data = "";
+      res.on("data", (c: Buffer) => { data += c; });
+      res.on("end", () => {
+        try {
+          const jwks = JSON.parse(data);
+          jwksCache = { keys: jwks.keys || [], ts: Date.now() };
+          resolve(jwksCache.keys);
+        } catch { resolve(jwksCache?.keys || []); }
+      });
+    }).on("error", () => resolve(jwksCache?.keys || []));
+  });
+}
+
+async function verifyJwtEs256(token: string): Promise<Record<string, any> | null> {
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    const header = JSON.parse(base64urlDecode(parts[0]).toString());
+    if (header.alg !== "ES256") return null;
+    const keys = await fetchJwks();
+    const jwk = keys.find((k: any) => k.kid === header.kid) || keys[0];
+    if (!jwk) return null;
+    const keyObj = crypto.createPublicKey({ key: jwk, format: "jwk" });
+    const signingInput = Buffer.from(`${parts[0]}.${parts[1]}`);
+    const derSig = ecdsaJoseToDer(base64urlDecode(parts[2]));
+    const valid = crypto.verify("sha256", signingInput, keyObj, derSig);
+    if (!valid) return null;
+    const payload = JSON.parse(base64urlDecode(parts[1]).toString());
+    if (payload.exp && payload.exp < Date.now() / 1000) return null;
+    return payload;
+  } catch { return null; }
+}
+
+function ecdsaJoseToDer(sig: Buffer): Buffer {
+  const r = sig.subarray(0, 32);
+  const s = sig.subarray(32, 64);
+  function encodeInt(buf: Buffer): Buffer {
+    let i = 0;
+    while (i < buf.length - 1 && buf[i] === 0) i++;
+    let b = buf.subarray(i);
+    if (b[0] & 0x80) b = Buffer.concat([Buffer.from([0]), b]);
+    return Buffer.concat([Buffer.from([0x02, b.length]), b]);
+  }
+  const dr = encodeInt(r);
+  const ds = encodeInt(s);
+  return Buffer.concat([Buffer.from([0x30, dr.length + ds.length]), dr, ds]);
+}
+
+async function verifyToken(token: string): Promise<Record<string, any> | null> {
   if (!token) return null;
+  // Try ES256 (JWKS) first — this is what Supabase uses
+  const es256 = await verifyJwtEs256(token);
+  if (es256) return es256;
+  // Fallback to HS256 if JWT_SECRET is set
   if (SUPABASE_JWT_SECRET) {
-    const payload = verifyJwtHs256(token, SUPABASE_JWT_SECRET);
-    if (payload) return payload;
+    const hs256 = verifyJwtHs256(token, SUPABASE_JWT_SECRET);
+    if (hs256) return hs256;
   }
   return null;
 }
@@ -132,7 +192,7 @@ export function jcWorldAuth(): RequestHandler {
       return;
     }
 
-    const payload = verifyToken(token);
+    const payload = await verifyToken(token);
     if (!payload) {
       if (path.startsWith("/api/")) {
         res.status(401).json({ error: "Token JC World inválido" });
