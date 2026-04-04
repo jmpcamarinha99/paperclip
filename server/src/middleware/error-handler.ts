@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import { HttpError } from "../errors.js";
+import { redactSensitive } from "./redact.js";
 
 export interface ErrorContext {
   error: { message: string; stack?: string; name?: string; details?: unknown; raw?: unknown };
@@ -21,9 +22,9 @@ function attachErrorContext(
     error: payload,
     method: req.method,
     url: req.originalUrl,
-    reqBody: req.body,
-    reqParams: req.params,
-    reqQuery: req.query,
+    reqBody: redactSensitive(req.body),
+    reqParams: redactSensitive(req.params),
+    reqQuery: redactSensitive(req.query),
   } satisfies ErrorContext;
   if (rawError) {
     (res as any).err = rawError;
