@@ -23,6 +23,8 @@ Este CLAUDE.md é subordinado ao CLAUDE.md principal em `/srv/CLAUDE.md`. Todas 
 
 Plataforma open-source de orquestração para empresas autónomas com agentes AI. Servidor Node.js + dashboard React que coordena equipas de agentes AI para gerir negócios — org charts, budgets, governance, goal alignment e agent coordination.
 
+> **Contexto JC World (Abr 2026):** O ecossistema JC World opera com **24 agentes** (N1→N4) coordenados via mesh v2 (inbox, memória persistente, dispatcher autónomo, auto-callback). A arquitectura do Paperclip é complementar a este sistema — enquanto o mesh JC World é baseado em ficheiros, o Paperclip oferece uma camada visual de orquestração e governance para empresas externas.
+
 ---
 
 ## Stack do Projeto
@@ -168,7 +170,7 @@ Documentação completa: `/srv/shared/docs/08-catalogo-ferramentas.md`
 
 ---
 
-*Última atualização: 26 de Março de 2026*
+*Última atualização: 12 de Abril de 2026 (alinhamento infra — ecossistema 24 agentes, auth centralizada)*
 *Projeto JC World — Agente subordinado ao Oscar*
 
 
